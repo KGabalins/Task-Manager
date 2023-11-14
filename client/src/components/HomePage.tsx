@@ -19,14 +19,14 @@ const HomePage = () => {
 
   const loadTasks = () => {
     axios
-      .get("http://localhost:3000/api/v1/tasks")
+      .get("/api/v1/tasks")
       .then((response) => response.data)
       .then((data) => setTasks(data.tasks));
   };
 
   const postTask = (taskName: string) => {
     axios
-      .post("http://localhost:3000/api/v1/tasks", { name: taskName })
+      .post("/api/v1/tasks", { name: taskName })
       .then(() => {
         loadTasks();
         setNewTask("");
@@ -36,7 +36,7 @@ const HomePage = () => {
 
   const deleteTask = (taskID: string) => {
     axios
-      .delete(`http://localhost:3000/api/v1/tasks/${taskID}`)
+      .delete(`/api/v1/tasks/${taskID}`)
       .then(loadTasks)
       .catch((error) => alert(error));
   };

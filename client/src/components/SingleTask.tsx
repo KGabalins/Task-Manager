@@ -9,6 +9,10 @@ const SingleTask = () => {
     message: "Task edited successfully!",
     active: false,
   });
+  const [errorMsg, setErrorMsg] = useState({
+    message: "Error",
+    active: false,
+  });
   const { taskID } = useParams();
 
   useEffect(() => {
@@ -17,7 +21,7 @@ const SingleTask = () => {
 
   const loadTask = () => {
     axios
-      .get(`http://localhost:3000/api/v1/tasks/${taskID}`)
+      .get(`/api/v1/tasks/${taskID}`)
       .then((response) => response.data)
       .then((data) => setTask(data.task));
   };
@@ -26,23 +30,31 @@ const SingleTask = () => {
     e.preventDefault();
 
     axios
-      .patch(`http://localhost:3000/api/v1/tasks/${taskID}`, task)
+      .patch(`/api/v1/tasks/${taskID}`, task)
       .then(() =>
         setSuccessMsg((prevState) => {
           return { ...prevState, active: true };
         })
       )
-      .catch((error) => alert(error));
+      .catch((error) => {
+        setSuccessMsg({ ...successMsg, active: false });
+        setErrorMsg({
+          message: error.response.data.msg.errors.name.message,
+          active: true,
+        });
+      });
   };
 
   return (
     <div className="flex items-center flex-col py-40">
       <h3
-        className={`text-center text-green-500 ${
-          successMsg.active ? "opacity-100" : "opacity-0"
+        className={`text-center ${
+          successMsg.active ? "text-green-500" : "text-red-500"
+        } ${
+          successMsg.active || errorMsg.active ? "opacity-100" : "opacity-0"
         }`}
       >
-        {successMsg.message}
+        {successMsg.active ? successMsg.message : errorMsg.message}
       </h3>
       <div className="border shadow-lg flex flex-col w-[450px] p-8 my-4 bg-white">
         <h2 className=" text-center mb-6 font-bold text-2xl">Edit Task</h2>
